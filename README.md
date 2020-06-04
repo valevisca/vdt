@@ -3,7 +3,7 @@
 
 This is my first own project in Django, excluding the tutorials and exercises I have done. 
 For this reason I am taking notes directly into the code as a way to remember why I had to implent the code the way it is.
-I typically indicate this using the code SE_NOTE or SE-NOTE, meaning the commnent is meant to be a Self Educating Note.
+I typically indicate this using the code <i>SE_NOTE</i> or <i>SE-NOTE</i>, meaning the commnent is meant to be a Self Educating Note.
 
 As it is right now (1st commit), the code allows to do:
   - Authentication
