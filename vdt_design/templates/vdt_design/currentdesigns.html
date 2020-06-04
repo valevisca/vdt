@@ -1,0 +1,41 @@
+{% extends 'vdt_design/base.html' %}
+
+{% block content %}
+
+{% if designs %}
+    <h1>{{ designs.count }} Current Design{{ designs.count|pluralize }}</h1>
+{% else %}
+    <h1>Current Designs</h1>
+{% endif %} 
+
+{% if designs %}
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Project Name</th>
+                <th>Customer</th>
+                <th>Description</th>
+                <th>Input File</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for design in designs %}
+                <tr>
+                    <td><a href="{% url 'viewdesign' design.id %}">{{ design.name }}</td>
+                    <td>{{ design.customer }}</td>
+                    <td>{% if design.description %} {{ design.description|safe|truncatechars:30 }}{% endif %}</td>
+                    <td>{% if design.inputfile %} 
+                            <a href="{{ design.inputfile.url }}" class="btn btm-primary btn-sm">{{ design.inputfile.url }}</a>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <h2>Looks like you do not have any design! </h2>
+    <br>
+    <a role="button" class="btn btn-primary" href="{% url 'designupload' %}">New Design</a>
+{% endif %}
+
+{% endblock %}

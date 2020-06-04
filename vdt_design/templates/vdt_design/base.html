@@ -1,0 +1,27 @@
+<!-- We can use an object, a user dictionary, directly provided by Django, withouth any need
+to export it via dictionary from views.py, to check if the user is logged
+in. -->
+
+{% if user.is_authenticated %}
+
+Logged in as {{ user.username }}
+
+<a class="nav-link" href="{% url 'designupload' %}">New Design</a>
+<a class="nav-link" href="{% url 'currentdesigns' %}">Current Designs</a>
+
+<form method="POST" action="{% url 'logoutuser' %}">
+    {% csrf_token %}
+    <button id="signOutBtn" type="submit">Logout</button>
+</form>
+
+{% else %}
+<a href="{% url 'signupuser' %}">Sign Up</a>
+<a href="{% url 'loginuser' %}">Login</a>
+
+{% endif %}
+<br>
+
+{% block content %}
+
+
+{% endblock %}

@@ -1,0 +1,7 @@
+{
+    "python.pythonPath": "/home/valerio/projects/my_env/bin/python",
+    "python.linting.pep8Enabled": true,
+    "python.linting.pylintPath": "/home/valerio/projects/my_env/bin/pylint",        
+    "python.linting.pylintArgs": ["--load-plugins", "pylint_django"],
+    "python.linting.pylintEnabled": true
+}

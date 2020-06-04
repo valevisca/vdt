@@ -1,0 +1,14 @@
+{% extends 'vdt_design/base.html' %}
+
+{% block content %}
+
+<h2>{{ design.name }}</h2>
+
+<h3>{{ error|safe }}</h3>
+
+<h4>Nodes table</h4>
+{{ df_sites|safe }}
+<h4>Sites table</h4>
+{{ df_nodes|safe }}
+
+{% endblock %}

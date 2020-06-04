@@ -1,0 +1,29 @@
+{% extends 'vdt_design/base.html' %}
+
+{% block content %}
+
+<h2>Design Details  </h2>
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Update</button>
+</form>
+
+<form method="POST" action="{% url 'deletedesign' design.id %}">
+    {% csrf_token %}
+    <button id="delete" type="submit">Delete</button>
+</form>
+
+<form method="POST" action="{% url 'analysedesign' design.id %}">
+    {% csrf_token %}
+    <button id="analyse" type="submit">Analyse</button>
+</form>
+
+<h3>{{ error|safe }}</h3>
+
+<h4>Nodes table</h4>
+{{ df_sites|safe }}
+<h4>Sites table</h4>
+{{ df_nodes|safe }}
+
+{% endblock %}

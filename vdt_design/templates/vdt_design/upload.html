@@ -1,0 +1,17 @@
+{% extends 'vdt_design/base.html' %}
+
+{% block content %}
+
+<h2>Upload Design</h2>
+<!-- SE-NOTE: it is important to set the proper form of encoding type when sending
+the file to django. Forgetting this may end up not seeing the file -->
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <input type="file" name="document">
+    <button type="submit">Upload file</button>
+</form>
+{% if fileurl %}
+    <p>Uploaded file: <a href="{{ fileurl }}">{{ fileurl }}</p>
+{% endif %}
+
+{% endblock %}
