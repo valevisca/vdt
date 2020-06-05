@@ -1,15 +1,16 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db import IntegrityError
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, PasswordChangeForm
 # We import the User object from the following library
 from django.contrib.auth.models import User
 # We import now the login method 
-from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth import login, logout, authenticate, update_session_auth_hash
 # Import the FileStorage object to manage filesize
 from django.core.files.storage import FileSystemStorage
 from .forms import DesignForm
 from .models import Design
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 # Adding now the pre and post processing Pandas and NumPy capabilities
 import pandas as pd
 import numpy as np
@@ -51,6 +52,36 @@ def signupuser(request):
             return render(request, 'vdt_design/signupuser.html', {
                             'form': UserCreationForm(),
                             'error':'Passwords did not match'})
+
+
+# '@login_required' tells Django that only users who have looged in can run the next
+# function
+@login_required
+def change_password(request):
+    if request.method == 'POST':
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)  # Important!
+            success_message = 'Your password was successfully updated!'
+            messages.success(request, success_message)
+            return render(request, 'vdt_design/change_password.html', {
+                    'form': form,
+                    'success_message': success_message,
+                    })
+        else:
+            messages.error(request, 'Please correct the error below.')
+            return render(request, 'vdt_design/change_password.html', {
+                    'form': form,
+                    'success_message': None,
+                    'error_message': 'Please correct the error below.',
+                    })
+    else:
+        form = PasswordChangeForm(request.user)
+        return render(request, 'vdt_design/change_password.html', {
+                    'form': form,
+                    'success_message': None,
+                    })
 
 
 def loginuser(request):

@@ -5,7 +5,7 @@ in. -->
 {% if user.is_authenticated %}
 
 Logged in as {{ user.username }}
-
+<a class="nav-link" href="{% url 'change_password' %}">Change Password</a>
 <a class="nav-link" href="{% url 'designupload' %}">New Design</a>
 <a class="nav-link" href="{% url 'currentdesigns' %}">Current Designs</a>
 
