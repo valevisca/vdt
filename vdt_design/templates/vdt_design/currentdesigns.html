@@ -3,12 +3,30 @@
 {% block content %}
 
 {% if designs %}
-    <h1>{{ designs.count }} Current Design{{ designs.count|pluralize }}</h1>
+    <h1>{{ designs.count }} Available Design{{ designs.count|pluralize }}</h1>
 {% else %}
     <h1>Current Designs</h1>
 {% endif %} 
 
 {% if designs %}
+<h3>Card Based Layout</h3>
+    {% for design in designs %}
+        <div class="card mb-2">
+            <h4 class="card-header">
+                {{ design.customer }}
+            </h4>
+            <div class="card-body">
+                <h5 class="card-title">{{ design.name }}</h5>
+                <p class="card-text">{% if design.description %} {{ design.description|safe|truncatechars:30 }}{% endif %}</p>
+                <p>{% if design.inputfile %}
+                    <a href="{{ design.inputfile.url }}" class="btn btm-primary btn-link">{{ design.inputfile.url }}</a>
+                {% endif %}</p>
+                <a href="{% url 'viewdesign' design.id %}" class="btn btn-primary">Design details</a>
+            </div>
+        </div>
+    {% endfor %}
+<br><br><br>
+<h3>Table Based Layout</h3>
     <table class="table">
         <thead>
             <tr>

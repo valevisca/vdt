@@ -1,16 +1,25 @@
 {% extends 'vdt_design/base.html' %}
 
+{% load crispy_forms_tags %}
+
 {% block content %}
+<div class="row justify-content-center">
+    <div class="col-6">
+        <div class="card">
+            <div class="card-body">
+                <h1>Login</h1>
 
-<h1>Login</h1>
+                <h2>{{ error }}</h2>
 
-<h2>{{ error }}</h2>
+                <form method="POST" novalidate>
+                    {% csrf_token %}
+                    {{ form|crispy }}
 
-<form method="POST">
-    {% csrf_token %}
-    {{ form.as_p }}
-
-    <button type="submit">Login</button>
-</form>
+                    <button type="submit" class="btn btn-primary">Login</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
 {% endblock %}

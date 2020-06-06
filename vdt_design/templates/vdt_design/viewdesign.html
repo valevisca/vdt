@@ -1,29 +1,36 @@
 {% extends 'vdt_design/base.html' %}
+{% load crispy_forms_tags %}
 
 {% block content %}
 
-<h2>Design Details  </h2>
-<form method="POST" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn btn-primary">Update</button>
-</form>
+<div class="row justify-content-left">
+    <div class="col-6">
+        <h2>Design Details  </h2>
 
-<form method="POST" action="{% url 'deletedesign' design.id %}">
-    {% csrf_token %}
-    <button id="delete" type="submit">Delete</button>
-</form>
 
-<form method="POST" action="{% url 'analysedesign' design.id %}">
-    {% csrf_token %}
-    <button id="analyse" type="submit">Analyse</button>
-</form>
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form|crispy }}
+            <button type="submit" class="btn btn-primary mb-1">Update</button>
+        </form>
 
-<h3>{{ error|safe }}</h3>
+        <form method="POST" action="{% url 'analysedesign' design.id %}">
+            {% csrf_token %}
+            <button id="analyse" class="btn btn-success mb-1" type="submit">Analyse</button>
+        </form>
 
-<h4>Nodes table</h4>
-{{ df_sites|safe }}
-<h4>Sites table</h4>
-{{ df_nodes|safe }}
+        <form method="POST" action="{% url 'deletedesign' design.id %}">
+            {% csrf_token %}
+            <button id="delete" class="btn btn-danger mb-1" type="submit">Delete</button>
+        </form>
+
+        <h3>{{ error|safe }}</h3>
+
+        <h4>Nodes table</h4>
+        {{ df_sites|safe }}
+        <h4>Sites table</h4>
+        {{ df_nodes|safe }}
+    </div>
+</div>
 
 {% endblock %}

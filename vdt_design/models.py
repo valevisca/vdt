@@ -32,6 +32,7 @@ class Design(models.Model):
         # Before calling the real 'delete' we remove the file from /media
         self.inputfile.delete()
         super().delete(*args, **kwargs)  # Call the "real" delete() method.
+
     
 
 
