@@ -7,10 +7,13 @@ from django.contrib.auth.models import User
 from django.contrib.auth import login, logout, authenticate, update_session_auth_hash
 # Import the FileStorage object to manage filesize
 from django.core.files.storage import FileSystemStorage
-from .forms import DesignForm
-from .models import Design
+from .forms import DesignForm, PidForm
+from .models import Design, Pid
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+# Enabling inpor-export
+from django.http import HttpResponse
+from .resources import PidResource
 # Adding now the pre and post processing Pandas and NumPy capabilities
 import pandas as pd
 import numpy as np
@@ -291,3 +294,136 @@ def deletedesign(request, design_pk):
     if request.method == 'POST':
         design.delete()
         return redirect('currentdesigns')
+
+
+@login_required
+def currentpids(request):
+    """
+    Import the pids from the Db, using the Pid object (see import section), filtering by user.
+    """
+    # First we retrieve all the Design.objects for the current user
+    pids = Pid.objects.filter(user=request.user)
+    return render(request, 'vdt_design/currentpids.html', {'pids':pids})
+
+
+@login_required
+def pidsupload(request):
+    """
+    This method load a file to memory and pass it to pandas to build a DataFrame (DF) representing the
+    excel worksheet.
+    We then scan through the DF to create the PIDs instances into the Db.
+    We have to check if the PID exists. If it exists we overwrite the data. If not we create the data.
+    In the first implementation we load the entire file to memory which should be fine, as the excel file
+    containing the PIDs is supposed to be small.
+    """
+    if request.method == 'GET':
+        # The request is a 'GET', we instantiate an empty form and pass it to the designupload
+        return render(request, 'vdt_design/pidsupload.html')
+    else:
+        df_pids = pd.read_excel(request.FILES['document'], 'pids', index_col=None, na_values=['NA'])
+        for index, row in df_pids.iterrows():
+            pid_instance = Pid(
+                sname = row['sym_name'],
+                pidtype = row['pidtype'],
+                name = row['name'],
+                description = row['description'],
+                cogs = round(row['cogs'],2),
+                gpl = round(row['gpl'],2),
+                discount = round(row['discount'],2),
+                netprice = round(row['netprice'],2),
+                power_typ = row['power_typ'],
+                power_max = row['power_max'],
+                mtbf = row['mtbf'],
+                user = request.user
+            )           
+            pid_instance.save()
+        return redirect('currentpids')
+
+@login_required
+def viewpid(request, sname):
+    pid = get_object_or_404(Pid, sname=sname, user=request.user)
+    if request.method == 'POST':
+        form = PidForm(request.POST, instance=pid)
+        if form.is_valid():
+            form.save()
+            return redirect('currentpids')
+        else:
+            return render(request, 'vdt_design/viewpid.html', {'form':form})
+    else:
+        form = PidForm(instance=pid)
+        return render(request, 'vdt_design/viewpid.html', {'form':form, 'pid':pid})
+
+
+
+@login_required
+def createpid(request):
+    """
+    This method create a new PID object and stores it in the database using Pid model and PidForm.
+    I am using 'sname' as primary key. I need to implement a way to generate a unique key in case the
+    one submitted is already in use.
+    I could also implement a search pid function.
+    For now I am simply capturring the error and 
+    """
+    if request.method == 'GET':
+        # The request is a 'GET', we instantiate an empty form and pass it to the designupload
+        return render(request, 'vdt_design/createpid.html', {
+                                'form': PidForm()
+        })
+    else:
+        try:
+            # If request is 'POST', we instantiate a form retrieving the data from the POST
+            form = PidForm(request.POST)
+            # Then we check if the form is valid and def save(self, *args, **kwargs):
+            if form.is_valid():
+                # We then create a new variable, called newtodo, where we temporarly store
+                # the form. NOTE 'commit=False', which means we do not store the form to 
+                # the Db yet, as we have to assign the todo to a specific user.
+                newpid = form.save(commit=False)
+                newpid.user = request.user
+                newpid.save()
+                return redirect('currentpids')
+            else:
+                return render(request, 'vdt_design/createpid.html', {
+                            'form': PidForm(),
+                            'error': form.errors})
+        except ValueError:
+            return render(request, 'vdt_design/createpid.html', {
+                            'form': PidForm(),
+                            'error': 'Bad Input Data. Please try again.'})   
+
+
+@login_required
+def deletepid(request, sname):
+    pid = get_object_or_404(Pid, sname=sname, user=request.user)
+    # This has to be triggered by a 'POST' request ONLY!
+    if request.method == 'POST':
+        pid.delete()
+        return redirect('currentpids')
+
+
+@login_required
+def deleteallpids(request):
+    """
+    Import all the pids from the Db, using the Pid object (see import section), filtering by user.
+    Then delete them.
+    """
+    # First we retrieve all the Design.objects for the current user
+    pids = Pid.objects.filter(user=request.user)
+    for pid in pids:
+        pid.delete()
+
+    return redirect('currentpids')
+
+
+@login_required
+def exportallpids(request):
+    pid_resource = PidResource()
+    dataset = pid_resource.export()
+    response = HttpResponse(dataset.xlsx, content_type='application/vnd.ms-excel')
+    response['Content-Disposition'] = 'attachment; filename="pid_details.xlsx"'
+    return response
+
+
+
+
+

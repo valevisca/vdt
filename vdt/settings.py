@@ -40,12 +40,17 @@ INSTALLED_APPS = [
     # Django Crispy forms to simplify rendering
     'crispy_forms',
 
+    # Installed Django inport-export
+    'import_export',
+
     'django_cleanup.apps.CleanupConfig',
 
     'vdt_design',
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+IMPORT_EXPORT_USE_TRANSACTIONS = True
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

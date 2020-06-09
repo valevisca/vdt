@@ -39,6 +39,13 @@ urlpatterns = [
     path('designs/<int:design_pk>', views.viewdesign, name='viewdesign'),
     path('designs/<int:design_pk>/delete', views.deletedesign, name='deletedesign'),
     path('designs/<int:design_pk>/analyse', views.analysedesign, name='analysedesign'),
+    path('pids/', views.currentpids, name='currentpids'),
+    path('pids/upload/', views.pidsupload, name='pidsupload'),
+    path('pids/create/', views.createpid, name='createpid'),
+    path('pids/delete_all/', views.deleteallpids, name='deleteallpids'),
+    path('pids/export_all/', views.exportallpids, name='exportallpids'),
+    path('pids/<str:sname>/', views.viewpid, name='viewpid'),
+    path('pids/<str:sname>/delete', views.deletepid, name='deletepid'),
 
 ]
 

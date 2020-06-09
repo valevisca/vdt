@@ -1,0 +1,103 @@
+{% extends 'vdt_design/base.html' %}
+
+{% block content %}
+
+{% if pids %}
+    <h1>{{ pids.count }} Available Pid{{ pids.count|pluralize }}</h1>
+{% else %}
+    <h1>Available Pids</h1>
+{% endif %} 
+
+{% if pids %}
+<h3>Card Based Layout</h3>
+{% for pid in pids %}
+    <div class="card mb-2">
+        <h4 class="card-header">{{ pid.name }}</h4>
+        <div class="card-body">
+            <h5 class="card-title">{{ pid.description|safe|truncatechars:50 }}</h5>
+            <button class="btn btn-outline-info btn-sm ml-4" type="button" data-toggle="collapse" data-target="#PID_{{pid.sname}}" aria-expanded="false" aria-controls="collapseExample">
+                PID Details
+            </button>
+            <div class="collapse" id="PID_{{pid.sname}}">
+                <p class="card-text">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Field</th>
+                                <th>Value</th>
+                                <th>Unit</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Symbolic Name</td>
+                                <td>{{ pid.sname }}</td>
+                                <td>-</td>
+                            </tr>
+                            <tr>
+                                <td>Type</td>
+                                <td>{{ pid.pidtype }}</td>
+                                <td>-</td>
+                            </tr>
+                            <tr>
+                                <td>COGS</td>
+                                <td>{{ pid.cogs }}</td>
+                                <td>$</td>
+                            </tr>
+                            <tr>
+                                <td>GPL</td>
+                                <td>{{ pid.gpl }}</td>
+                                <td>$</td>
+                            </tr>
+                            <tr>
+                                <td>Discount</td>
+                                <td>{{ pid.discount }}</td>
+                                <td>-</td>
+                            </tr>
+                            <tr>
+                                <td>Net Price</td>
+                                <td>{{ pid.netprice }}</td>
+                                <td>$</td>
+                            </tr>
+                            <tr>
+                                <td>Typ. Power</td>
+                                <td>{{ pid.power_typ }}</td>
+                                <td>W</td>
+                            </tr>
+                            <tr>
+                                <td>MAX Power</td>
+                                <td>{{ pid.power_max }}</td>
+                                <td>W</td>
+                            </tr>
+                            <tr>
+                                <td>MTBF</td>
+                                <td>{{ pid.mtbf }}</td>
+                                <td>hours</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="btn-group" role="group" aria-label="Basic example">
+                        <!--
+                        <a href="{% url 'viewpid' pid.sname %}" class="btn btn-primary">PID Update</a>
+                        -->
+                        <form method="GET" action="{% url 'viewpid' pid.sname %}">
+                            {% csrf_token %}
+                            <button id="delete" class="btn btn-primary mb-1 mr-2" type="submit">Update</button>
+                        </form>
+                        <form method="POST" action="{% url 'deletepid' pid.sname %}">
+                            {% csrf_token %}
+                            <button id="delete" class="btn btn-danger mb-1 mr-2" type="submit">Delete</button>
+                        </form>
+                    </div>
+                </p>
+            </div>
+        </div>
+    </div>
+{% endfor %}
+{% else %}
+    <h2>Looks like you have not created any PID! </h2>
+    <br>
+    <a role="button" class="btn btn-primary" href="{% url 'designupload' %}">New PID</a>
+{% endif %}
+
+{% endblock %}

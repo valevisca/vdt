@@ -2,7 +2,7 @@ from django.contrib import admin
 
 # Register your models here.
 # First we have to import the module 'Project' into admin.py
-from .models import Design
+from .models import Design, Pid
 
 
 # The following class define some readonly fields which are then reported in the
@@ -12,3 +12,4 @@ class DesignAdmin(admin.ModelAdmin):
 
 # Then we have to register it 
 admin.site.register(Design, DesignAdmin)
+admin.site.register(Pid)

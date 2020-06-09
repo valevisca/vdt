@@ -1,0 +1,21 @@
+{% extends 'vdt_design/base.html' %}
+
+{% block content %}
+
+<div class="row justify-content-left">
+    <div class="col-6">
+        <h2>PIDs Upload</h2>
+        <!-- SE-NOTE: it is important to set the proper form of encoding type when sending
+        the file to django. Forgetting this may end up not seeing the file -->
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="file" name="document">
+            <button type="submit" class="btn btn-primary mb-1">Upload PIDs</button>
+        </form>
+        {% if fileurl %}
+            <p>Uploaded file: <a href="{{ fileurl }}">{{ fileurl }}</p>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}
